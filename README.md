@@ -14,8 +14,9 @@ deploy the package into the scatch org.
 you should login at first.
 
 ## salesforce enviroment details
+ Instance Url    https://fun-enterprise-618-dev-ed.scratch.my.salesforce.com 
  Password        6jgxbhhKsoe]t  
  Username        test-9evc09ctqikl@example.com    
- 
+
 ## Salesforce dx commands
 https://developer.salesforce.com/docs/atlas.en-us.sfdx_cli_reference.meta/sfdx_cli_reference/cli_reference_unified.htm#cli_reference_login_functions_unified
