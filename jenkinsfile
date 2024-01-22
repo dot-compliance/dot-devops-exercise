@@ -1,0 +1,15 @@
+pipeline {
+    agnet any
+    parameters {
+        string(name: 'TARGET_DIR', defaultValue: 'TargetDeploy', description: 'Where to deploy to?')
+        booleanParam(name: 'DRY_RUN', defaultValue: false, description: 'Set to only print operations')
+    }
+
+    stages {
+        stage('Stage 1111212') {
+            steps {
+                echo "Helloy $params.TARGET_DIR" 
+            }
+        }
+    }
+}
