@@ -5,6 +5,10 @@ pipeline {
         string(name: 'MEMBER_PACKAGE', defaultValue: 'HelloWorld.cls', description: 'Package to put in xml file')
         booleanParam(name: 'DRY_RUN', defaultValue: false, description: 'Set to only print operations')
     }
+/*    environment {
+        PATH=PATH + "C:\\Users\\User\\AppData\\Local\\Microsoft\\WindowsApps"
+    }
+*/
 
     stages {
         stage('Inits') {
@@ -18,16 +22,17 @@ pipeline {
             steps {
                 script {
                     String xmlNamePlaceHolder = 'PLACE_HOLDER'
+                    String pythonScript = "$WORKSPACE\\python\\sedXml.py"
                     echo "Setting XML $xmlFile $xmlNamePlaceHolder to $params.MEMBER_PACKAGE"
-                    sh """
-                        pwd
-                        ls -la $xmlFile
+                    bat """
+                        echo %CD%
+                        dir $xmlFile
                         echo "========= xml file before sed ============="
-                        cat $xmlFile
+                        type $xmlFile
                         echo "============"
-                        sed $xmlFile $xmlNamePlaceHolder $params.MEMBER_PACKAGE"
+                        python $pythonScript
                         echo "========= xml file after sed ============="
-                        cat $xmlFile
+                        type $xmlFile
                         echo "============"
                     """
                 }
