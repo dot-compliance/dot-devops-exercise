@@ -5,10 +5,6 @@ pipeline {
         string(name: 'MEMBER_PACKAGE', defaultValue: 'HelloWorld.cls', description: 'Package to put in xml file')
         booleanParam(name: 'DRY_RUN', defaultValue: false, description: 'Set to only print operations')
     }
-/*    environment {
-        PATH=PATH + "C:\\Users\\User\\AppData\\Local\\Microsoft\\WindowsApps"
-    }
-*/
 
     stages {
         stage('Inits') {
@@ -30,6 +26,7 @@ pipeline {
                         echo "========= xml file before sed ============="
                         type $xmlFile
                         echo "============"
+                        set PATH="%PATH%;C:\\Users\\User\\AppData\\Local\\Microsoft\\WindowsApps"
                         where python
                         python --version
                         python $pythonScript || exit
