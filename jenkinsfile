@@ -20,6 +20,8 @@ pipeline {
                     String xmlNamePlaceHolder = 'PLACE_HOLDER'
                     echo "Setting XML $xmlFile $xmlNamePlaceHolder to $params.MEMBER_PACKAGE"
                     sh """
+                        pwd
+                        ls -la $xmlFile
                         echo "========= xml file before sed ============="
                         cat $xmlFile
                         echo "============"
