@@ -1,6 +1,6 @@
 pipeline {
     agnet {
-        built-in
+        'built-in'
     }
     parameters {
         string(name: 'TARGET_DIR', defaultValue: 'TargetDeploy', description: 'Where to deploy to?')
