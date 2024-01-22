@@ -32,7 +32,7 @@ pipeline {
                         set python="C:\\Users\\User\\AppData\\Local\\Microsoft\\WindowsApps\\python.exe"
                         echo %python%
                         python --version
-                        C:\\Users\\User\\AppData\\Local\\Microsoft\\WindowsApps\\python.exe $pythonScript >> error.log || exit
+                        C:\\Users\\User\\AppData\\Local\\Microsoft\\WindowsApps\\python.exe $pythonScript 2>&1 error.log || exit
                         echo "========= xml file after sed ============="
                         type $xmlFile
                         echo "============"
