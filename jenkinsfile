@@ -29,13 +29,13 @@ pipeline {
                         if %errorlevel% neq 0 exit /b!
 
                         echo %CD%
-                        dir $xmlFile & call :error
+                        dir $xmlFile
                         echo "========= xml file before sed ============="
                         type $xmlFile
                         echo "============"
                         where python
                         python --version
-                        python $pythonScript & call :error
+                        python $pythonScript
                         echo "========= xml file after sed ============="
                         type $xmlFile
                         echo "============"
