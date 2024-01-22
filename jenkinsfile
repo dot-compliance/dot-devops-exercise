@@ -34,7 +34,7 @@ pipeline {
                         echo "========= xml file after sed ============="
                         type $xmlFile
                         echo "============"
-                    """
+                    """ || error("Could not run python")
                 }
             }
         }
