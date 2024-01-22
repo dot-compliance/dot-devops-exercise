@@ -33,6 +33,8 @@ pipeline {
                         echo "========= xml file before sed ============="
                         type $xmlFile
                         echo "============"
+                        where python
+                        python --version
                         python $pythonScript & call :error
                         echo "========= xml file after sed ============="
                         type $xmlFile
