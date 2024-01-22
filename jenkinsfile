@@ -25,17 +25,14 @@ pipeline {
                     String pythonScript = "$WORKSPACE\\python\\sedXml.py"
                     echo "Setting XML $xmlFile $xmlNamePlaceHolder to $params.MEMBER_PACKAGE"
                     bat """
-                        :error
-                        if %errorlevel% neq 0 exit
-
                         echo %CD%
-                        dir $xmlFile & call :error
+                        dir $xmlFile
                         echo "========= xml file before sed ============="
                         type $xmlFile
                         echo "============"
                         where python
                         python --version
-                        python $pythonScript & call :error
+                        python $pythonScript || exit
                         echo "========= xml file after sed ============="
                         type $xmlFile
                         echo "============"
