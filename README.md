@@ -14,11 +14,7 @@ In this exercise, you will be working with a Salesforce package folder. Your goa
 
 2.2. Deploy the updated package into the Scratch Org.
 
-## Salesforce Environment Details
-
-- **Instance URL**: [https://fun-enterprise-618-dev-ed.scratch.my.salesforce.com](https://fun-enterprise-618-dev-ed.scratch.my.salesforce.com)
-- **Password**: 6jgxbhhKsoe]t
-- **Username**: test-9evc09ctqikl@example.com
+          Skip it
 
 ## Salesforce DX Commands Reference
 
