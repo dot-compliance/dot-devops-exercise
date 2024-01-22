@@ -10,7 +10,7 @@ pipeline {
         stage('Inits') {
             steps {
                 script {
-                    xmlFile = "$WORKSPACE/manifest/package.xml"
+                    xmlFile = "$WORKSPACE\\manifest\\package.xml"
                 }
             }
         }
