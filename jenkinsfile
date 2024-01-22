@@ -1,5 +1,5 @@
 pipeline {
-    agnet any
+    agnet built-in
     parameters {
         string(name: 'TARGET_DIR', defaultValue: 'TargetDeploy', description: 'Where to deploy to?')
         booleanParam(name: 'DRY_RUN', defaultValue: false, description: 'Set to only print operations')
