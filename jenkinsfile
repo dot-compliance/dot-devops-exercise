@@ -12,6 +12,7 @@ pipeline {
                 script {
                     xmlFile = "$WORKSPACE\\manifest\\package.xml"
                     pythonLog = 'error.log'
+                    pythonPath = 'C:\\Users\\User\\AppData\\Local\\Microsoft\\WindowsApps\\python.exe'
                 }
             }
         }
@@ -23,16 +24,17 @@ pipeline {
                     echo "Setting XML $xmlFile $xmlNamePlaceHolder to $params.MEMBER_PACKAGE"
                     bat """
                         echo %CD%
+                        echo %CD% > $pythonLog
                         dir $xmlFile
                         dir $pythonScript
                         echo "========= xml file before sed ============="
                         type $xmlFile
                         echo "============"
                         set PATH="%PATH%;C:\\Users\\User\\AppData\\Local\\Microsoft\\WindowsApps"
-                        set python="C:\\Users\\User\\AppData\\Local\\Microsoft\\WindowsApps\\python.exe"
+                        set python=$pythonPath
                         echo %python%
                         python --version
-                        C:\\Users\\User\\AppData\\Local\\Microsoft\\WindowsApps\\python.exe $pythonScript 2>&1 error.log || exit
+                        $pythonPath $pythonScript 2>>&1 $pythonLog || exit
                         echo "========= xml file after sed ============="
                         type $xmlFile
                         echo "============"
@@ -42,6 +44,9 @@ pipeline {
         }
     }
     post {
+        always {
+            bat "wget -O console-output.log ${BUILD_URL}consoleText"
+        }
         failure {
             archiveArtifacts artifacts: pythonLog
         }
