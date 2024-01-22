@@ -1,7 +1,5 @@
 pipeline {
-    agent {
-        'built-in'
-    }
+    agent any
     parameters {
         string(name: 'TARGET_DIR', defaultValue: 'TargetDeploy', description: 'Where to deploy to?')
         booleanParam(name: 'DRY_RUN', defaultValue: false, description: 'Set to only print operations')
