@@ -11,6 +11,7 @@ pipeline {
             steps {
                 script {
                     xmlFile = "$WORKSPACE\\manifest\\package.xml"
+                    pythonLog = 'error.log'
                 }
             }
         }
@@ -31,13 +32,18 @@ pipeline {
                         set python="C:\\Users\\User\\AppData\\Local\\Microsoft\\WindowsApps\\python.exe"
                         echo %python%
                         python --version
-                        C:\\Users\\User\\AppData\\Local\\Microsoft\\WindowsApps\\python.exe $pythonScript || exit
+                        C:\\Users\\User\\AppData\\Local\\Microsoft\\WindowsApps\\python.exe $pythonScript >> error.log || exit
                         echo "========= xml file after sed ============="
                         type $xmlFile
                         echo "============"
                     """
                 }
             }
+        }
+    }
+    post {
+        failure {
+            archiveArtifacts artifacts: pythonLog
         }
     }
 }
