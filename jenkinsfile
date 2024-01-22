@@ -26,16 +26,16 @@ pipeline {
                     echo "Setting XML $xmlFile $xmlNamePlaceHolder to $params.MEMBER_PACKAGE"
                     bat """
                         :error
-                        if %errorlevel% neq 0 exit /b!
+                        if %errorlevel% neq 0 exit
 
                         echo %CD%
-                        dir $xmlFile
+                        dir $xmlFile & call :error
                         echo "========= xml file before sed ============="
                         type $xmlFile
                         echo "============"
                         where python
                         python --version
-                        python $pythonScript
+                        python $pythonScript & call :error
                         echo "========= xml file after sed ============="
                         type $xmlFile
                         echo "============"
