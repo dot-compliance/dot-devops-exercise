@@ -28,7 +28,6 @@ pipeline {
                         echo "============"
                         set PATH="%PATH%;C:\\Users\\User\\AppData\\Local\\Microsoft\\WindowsApps"
                         set python="C:\\Users\\User\\AppData\\Local\\Microsoft\\WindowsApps"
-                        where python
                         python --version
                         python $pythonScript || exit
                         echo "========= xml file after sed ============="
