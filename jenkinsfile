@@ -23,6 +23,7 @@ pipeline {
                     bat """
                         echo %CD%
                         dir $xmlFile
+                        dir $pythonScript
                         echo "========= xml file before sed ============="
                         type $xmlFile
                         echo "============"
