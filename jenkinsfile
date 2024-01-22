@@ -9,7 +9,9 @@ pipeline {
     stages {
         stage('Inits') {
             steps {
-                xmlFile = "$WORKSPACE/manifest/package.xml"
+                script {
+                    xmlFile = "$WORKSPACE/manifest/package.xml"
+                }
             }
         }
         stage('Set XML') {
