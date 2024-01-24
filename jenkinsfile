@@ -8,16 +8,17 @@ pipeline {
         booleanParam(name: 'DRY_RUN',  defaultValue: false, description: 'Set to only print operations')
     }
 
+    if (!params.MEMBER_PACKAGE) {
+        error("MEMBER_PACKAGE parameter is mandatory")
+    }
+    if (!params.SF_ORG_ALIAS) {
+        error("SF_ORG_ALIAS parameter is mandatory")
+    }
+
     stages {
         stage('Inits') {
             steps {
                 script {
-                    if (!params.MEMBER_PACKAGE) {
-                        error("MEMBER_PACKAGE parameter is mandatory")
-                    }
-                    if (!params.SF_ORG_ALIAS) {
-                        error("SF_ORG_ALIAS parameter is mandatory")
-                    }
                     xmlFile = "$WORKSPACE\\manifest\\package.xml"
                     branchName = "deploy_${params.MEMBER_PACKAGE}"
                 }
