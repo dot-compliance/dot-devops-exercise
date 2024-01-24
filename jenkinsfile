@@ -1,7 +1,7 @@
 pipeline {
     agent any
     parameters {
-        string(name: 'MEMBER_PACKAGE', defaultValue: 'HelloWorld', description: 'Package to put in xml file')
+        string(name: 'MEMBER_PACKAGE', description: 'Mandatory: Package to put in xml file')
         string(name: 'TARGET_DIR',     defaultValue: 'c:\\downloads\\dot_deploy', description: 'Where to deploy to (for local deploy only)')
         string(name: 'SF_ORG_ALIAS',   defaultValue: '', description: 'SF org to deploy to (for SF deploy only)')
         booleanParam(name: 'FORCE_DEPLOY',  defaultValue: false, description: 'Set to force SF deploy')
@@ -12,6 +12,9 @@ pipeline {
         stage('Inits') {
             steps {
                 script {
+                    if (!params.MEMBER_PACKAGE) {
+                        error("MEMBER_PACKAGE parameter is mandatory")
+                    }
                     xmlFile = "$WORKSPACE\\manifest\\package.xml"
                     branchName = "deploy_${params.MEMBER_PACKAGE}"
                 }
@@ -33,8 +36,12 @@ pipeline {
                         type $xmlFile
                         echo "============"
                         git commit $xmlFile -m "deploy: ${params.MEMBER_PACKAGE}" >> $gitLog || exit
-                        git push origin $branchName  >> $gitLog || exit
                     """
+                    if (!params.DRY_RUN) {
+                        bat """
+                            git push origin $branchName  >> $gitLog || exit
+                        """
+                    }
                 }
             }
             post {
@@ -68,14 +75,19 @@ pipeline {
         stage('SF Deploy') {
             steps {
                 script {
-                    String forceFlag = ''
+                    String sfDeployCmd = "sf deploy functions --connected-org $params.SF_ORG_ALIAS $forceFlag --branch $branchName --json"
                     if (params.FORCE_DEPLOY) {
-                        forceFlag = ' --force'
+                        sfDeployCmd += ' --force'
                     }
-                    sfDeplpoyLog = 'SF_deploy.log'
-                    bat """
-                        sf deploy functions --connected-org $params.SF_ORG_ALIAS $forceFlag --branch $branchName --json > $sfDeplpoyLog  || exit
-                    """
+                    if (params.DRY_RUN) {
+                        echo "DRY_RUN: SF deploy command: $sfDeployCmd"
+                        echo "DRY_RUN: SF deploy command: $sfDeployCmd" > $sfDeplpoyLog
+                    } else {
+                        sfDeplpoyLog = 'SF_deploy.log'
+                        bat """
+                            $sfDeployCmd > $sfDeplpoyLog  || exit
+                        """
+                    }
                 }
             }
             post {
@@ -84,6 +96,5 @@ pipeline {
                 }
             }
         }
-
     }
 }
