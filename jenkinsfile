@@ -111,10 +111,14 @@ pipeline {
     }
     post {
         failure {
-            currentBuild.description = "$dryRunString Failed: $params.MEMBER_PACKAGE deploy"
+            script {
+                currentBuild.description = "$dryRunString Failed: $params.MEMBER_PACKAGE deploy"
+            }
         }
         success {
-            currentBuild.description = "$dryRunString OK: $params.MEMBER_PACKAGE deploy"
+            script {
+                currentBuild.description = "$dryRunString OK: $params.MEMBER_PACKAGE deploy"
+            }
         }
     }
 }
