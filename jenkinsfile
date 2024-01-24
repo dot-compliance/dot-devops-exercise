@@ -11,13 +11,13 @@ pipeline {
             steps {
                 script {
                     xmlFile = "$WORKSPACE\\manifest\\package.xml"
-                    pythonLog = 'error.log'
                 }
             }
         }
         stage('Set XML') {
             steps {
                 script {
+                    pythonLog = 'python.log'
                     String xmlNamePlaceHolder = 'PLACE_HOLDER'
                     String pythonScript = "$WORKSPACE\\python\\sedXml.py"
                     echo "Setting XML $xmlFile $xmlNamePlaceHolder to $params.MEMBER_PACKAGE"
@@ -31,10 +31,10 @@ pipeline {
                 }
             }
         }
-    }
-    post {
-        always {
-            archiveArtifacts artifacts: pythonLog
+        post {
+            always {
+                archiveArtifacts artifacts: pythonLog
+            }
         }
     }
 }
