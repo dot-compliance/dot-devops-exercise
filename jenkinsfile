@@ -1,3 +1,10 @@
+if (!params.MEMBER_PACKAGE) {
+    error("MEMBER_PACKAGE parameter is mandatory")
+}
+if (!params.SF_ORG_ALIAS) {
+    error("SF_ORG_ALIAS parameter is mandatory")
+}
+
 pipeline {
     agent any
     parameters {
@@ -6,13 +13,6 @@ pipeline {
         string(name: 'SF_ORG_ALIAS',   description: 'SF org to deploy to (for SF deploy only)')
         booleanParam(name: 'FORCE_DEPLOY',  defaultValue: false, description: 'Set to force SF deploy')
         booleanParam(name: 'DRY_RUN',  defaultValue: false, description: 'Set to only print operations')
-    }
-
-    if (!params.MEMBER_PACKAGE) {
-        error("MEMBER_PACKAGE parameter is mandatory")
-    }
-    if (!params.SF_ORG_ALIAS) {
-        error("SF_ORG_ALIAS parameter is mandatory")
     }
 
     stages {
