@@ -23,6 +23,7 @@ pipeline {
                     String pythonScript = "$WORKSPACE\\python\\sedXml.py"
                     echo "Setting XML $xmlFile $xmlNamePlaceHolder to $params.MEMBER_PACKAGE"
                     bat """
+                        echo 'hello batch'
                         echo %CD%
                         echo %CD% > $pythonLog
                         dir $xmlFile
