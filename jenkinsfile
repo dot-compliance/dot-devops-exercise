@@ -138,7 +138,10 @@ pipeline {
                     python $sedXmlPythonScript --file_to_sed $statusFile --orig_string 'STATUS_PLACE_HOLDER' --new_string ${currentBuild.currentResult}
                     python $sedXmlPythonScript --file_to_sed $statusFile --orig_string 'USER_PLACE_HOLDER' --new_string $env.BUILD_USER_ID
                     python $sedXmlPythonScript --file_to_sed $statusFile --orig_string 'URL_PLACE_HOLDER' --new_string ${BUILD_URL}console
-                    $xcopyCmd $statusFile $targetLocalDir\\$statusFile
+                    echo '======== status file: ====='
+                    type $statusFile
+                    echo '==========================='
+                    $xcopyCmd $statusFile $targetLocalDir
                 """
                 archiveArtifacts artifacts: statusFile
             }
