@@ -2,7 +2,7 @@ print('Hello, World!')
 from argparse import ArgumentParser
 
 parser = ArgumentParser()
-parser.add_argument("-f", "--file_to_sed", dest="file_to_sed", default="manifest\\package1.xml",
+parser.add_argument("-f", "--file_to_sed", dest="file_to_sed", default="manifest\\package.xml",
                     help="File to edit")
 parser.add_argument("-o", "--orig_string", dest="orig_string", default="PLACE_HOLDER",
                     help="What string to replace")
