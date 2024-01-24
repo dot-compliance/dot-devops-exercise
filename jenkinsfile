@@ -22,9 +22,8 @@ pipeline {
                     String pythonScript = "$WORKSPACE\\python\\sedXml.py"
                     echo "Setting XML $xmlFile $xmlNamePlaceHolder to $params.MEMBER_PACKAGE"
                     bat """
-                        echo %CD% > $pythonLog
-                        python --version
-                        python $pythonScript || exit
+                        echo "Output of python script: $pythonScript" > $pythonLog
+                        python $pythonScript >> $pythonLog || exit
                         echo "========= xml file after sed ============="
                         type $xmlFile
                         echo "============"
@@ -35,9 +34,6 @@ pipeline {
     }
     post {
         always {
-            bat "wget -O console-output.log ${BUILD_URL}consoleText"
-        }
-        failure {
             archiveArtifacts artifacts: pythonLog
         }
     }
