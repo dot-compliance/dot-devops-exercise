@@ -6,7 +6,7 @@ parser.add_argument("-f", "--file_to_sed", dest="file_to_sed", default="manifest
                     help="File to edit")
 parser.add_argument("-o", "--orig_string", dest="orig_string", default="PLACE_HOLDER",
                     help="What string to replace")
-parser.add_argument("-n", "--new_string", dest="new_string", default="HelloWorld.cls",
+parser.add_argument("-n", "--new_string", dest="new_string",
                     help="The new string to set")
 
 args = parser.parse_args()
