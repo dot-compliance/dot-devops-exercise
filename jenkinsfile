@@ -12,7 +12,6 @@ pipeline {
                 script {
                     xmlFile = "$WORKSPACE\\manifest\\package.xml"
                     pythonLog = 'error.log'
-                    pythonPath = 'C:\\Users\\User\\AppData\\Local\\Microsoft\\WindowsApps\\python.exe'
                 }
             }
         }
@@ -28,16 +27,11 @@ pipeline {
                         echo %CD% > $pythonLog
                         dir $xmlFile
                         dir $pythonScript
-                        dir $pythonPath
                         echo "========= xml file before sed ============="
                         type $xmlFile
                         echo "============"
-                        set PATH="%PATH%;C:\\Users\\User\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Launcher\\;"
-                        set python=$pythonPath
-                        echo %python%
-                        set
-                        $pythonPath --version
-                        $pythonPath $pythonScript 2>>&1 $pythonLog || exit
+                        python --version
+                        python $pythonScript 2>>&1 $pythonLog || exit
                         echo "========= xml file after sed ============="
                         type $xmlFile
                         echo "============"
