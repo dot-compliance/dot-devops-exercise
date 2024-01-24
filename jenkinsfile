@@ -25,7 +25,8 @@ pipeline {
                     xmlFile = "$WORKSPACE\\manifest\\package.xml"
                     errorsFile = 'error.log'
                     sedXmlPythonScript = "$WORKSPACE\\python\\sedXml.py"
-                    statusFile = 'status_template.xml'
+                    statusTemplateFile = 'status_template.xml'
+                    statusFile = 'status.xml'
                     bat "echo 'Errors for ${BUILD_URL}console' > $errorsFile"
                     branchName = "deploy_${params.MEMBER_PACKAGE}_${currentBuild.startTimeInMillis}"
                     targetLocalDir = "$params.TARGET_DIR\\$branchName"
@@ -135,9 +136,10 @@ pipeline {
         always {
             script {
                 bat """
-                    python $sedXmlPythonScript --file_to_sed $statusFile --orig_string 'STATUS_PLACE_HOLDER' --new_string ${currentBuild.currentResult}
-                    python $sedXmlPythonScript --file_to_sed $statusFile --orig_string 'USER_PLACE_HOLDER' --new_string $env.BUILD_USER_ID
-                    python $sedXmlPythonScript --file_to_sed $statusFile --orig_string 'URL_PLACE_HOLDER' --new_string ${BUILD_URL}console
+                    $xcopyCmd $statusTemplateFile $statusFile
+                    python $sedXmlPythonScript --file_to_sed $statusFile --orig_string STATUS_PLACE_HOLDER --new_string ${currentBuild.currentResult}
+                    python $sedXmlPythonScript --file_to_sed $statusFile --orig_string USER_PLACE_HOLDER --new_string $env.BUILD_USER_ID
+                    python $sedXmlPythonScript --file_to_sed $statusFile --orig_string URL_PLACE_HOLDER --new_string ${BUILD_URL}console
                     echo '======== status file: ====='
                     type $statusFile
                     echo '==========================='
