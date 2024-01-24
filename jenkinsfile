@@ -113,9 +113,7 @@ pipeline {
                         echo "$dryRunString SF deploy command: $sfDeployCmd"
                         bat "echo '$dryRunString SF deploy command: $sfDeployCmd' > $sfDeployLog"
                     } else {
-                        bat """
-                            $sfDeployCmd > $sfDeployLog || exit
-                        """
+                        bat "$sfDeployCmd > $sfDeployLog || exit"
                     }
                 }
             }
@@ -123,10 +121,12 @@ pipeline {
                 always {
                     archiveArtifacts artifacts: sfDeployLog
                 }
-                bat """
+                failure {
+                    bat """
                         echo 'Errors for ${STAGE_NAME}'
                         type $sfDeployLog >> $errorsFile
                     """
+                }
             }
         }
     }
