@@ -1,15 +1,166 @@
+if (!params.MEMBER_PACKAGE) {
+    currentBuild.description = "Missing MEMBER_PACKAGE param"
+    error("MEMBER_PACKAGE parameter is mandatory")
+}
+if (!params.SF_ORG_ALIAS) {
+    currentBuild.description = "Missing SF_ORG_ALIAS param"
+    error("SF_ORG_ALIAS parameter is mandatory")
+}
+
 pipeline {
-    agnet any
+    agent any
     parameters {
-        string(name: 'TARGET_DIR', defaultValue: 'TargetDeploy', description: 'Where to deploy to?')
-        booleanParam(name: 'DRY_RUN', defaultValue: false, description: 'Set to only print operations')
+        string(name: 'MEMBER_PACKAGE', description: 'Mandatory: Package to put in xml file')
+        string(name: 'TARGET_DIR',     defaultValue: 'c:\\downloads\\dot_deploy', description: 'Where to local deploy to (for local deploy only)')
+        string(name: 'SF_ORG_ALIAS',   description: 'Mandatory: SF org to deploy to (for SF deploy only)')
+        booleanParam(name: 'FORCE_DEPLOY',  defaultValue: false, description: 'Set to force SF deploy')
+        booleanParam(name: 'DRY_RUN',  defaultValue: false, description: 'Set to only print operations')
     }
 
     stages {
-        stage('Stage 1111212') {
+        stage('Inits') {
             steps {
-                echo "Helloy $params.TARGET_DIR" 
+                script {
+                    xcopyCmd = 'xcopy /E /I /F'
+                    xmlFile = "$WORKSPACE\\manifest\\package.xml"
+                    errorsFile = 'error.log'
+                    sedXmlPythonScript = "$WORKSPACE\\python\\sedXml.py"
+                    statusTemplateFile = 'status_template.xml'
+                    statusFile = 'status.xml'
+                    bat "echo 'Errors for ${BUILD_URL}console' > $errorsFile"
+                    branchName = "deploy_${params.MEMBER_PACKAGE}_${currentBuild.startTimeInMillis}"
+                    targetLocalDir = "$params.TARGET_DIR\\$branchName"
+                    dryRunString = ''
+                    if (params.DRY_RUN) {
+                        dryRunString = 'DRY_RUN: '
+                    }
+                }
             }
+        }
+        stage('Set XML') {
+            steps {
+                script {
+                    pythonLog = 'python.log'
+                    gitLog = 'git.log'
+                    String xmlNamePlaceHolder = 'PLACE_HOLDER'
+                    echo "Setting XML $xmlFile $xmlNamePlaceHolder to $params.MEMBER_PACKAGE"
+                    bat """
+                        git config --global user.email "hagitsegev4@gmail.com"
+                        git config --global user.name "Hagit Segev"
+                        git checkout -b $branchName > $gitLog || exit
+                        echo "Output of python script: $sedXmlPythonScript" > $pythonLog
+                        python $sedXmlPythonScript --new_string '${params.MEMBER_PACKAGE}.cls' >> $pythonLog || exit
+                        echo "========= xml file after sed ============="
+                        type $xmlFile
+                        echo "============"
+                        git commit $xmlFile -m "deploy: ${params.MEMBER_PACKAGE}" >> $gitLog || exit
+                    """
+                    if (!params.DRY_RUN) {
+                        bat """
+                            git push origin $branchName  >> $gitLog || exit
+                        """
+                    }
+                }
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: gitLog
+                    archiveArtifacts artifacts: pythonLog
+                }
+                failure {
+                    bat """
+                        echo 'Errors for ${STAGE_NAME}'
+                        type $gitLog >> $errorsFile
+                    """
+                }
+
+            }
+        }
+
+        stage('Local Deploy') {
+            steps {
+                script {
+                    copyLog = 'local_deploy.log'
+                    bat """
+                        echo 'Local Deploy to $targetLocalDir'
+                        mkdir $targetLocalDir || exit
+                        $xcopyCmd $WORKSPACE\\config $targetLocalDir\\config > $copyLog  || exit
+                        $xcopyCmd $WORKSPACE\\force-app $targetLocalDir\\force-app >> $copyLog  || exit
+                        $xcopyCmd $WORKSPACE\\manifest $targetLocalDir\\manifest >> $copyLog  || exit
+                    """
+                }
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: copyLog
+                }
+                failure {
+                    bat """
+                        echo 'Errors for ${STAGE_NAME}'
+                        type $copyLog >> $errorsFile
+                    """
+                }
+            }
+        }
+
+        stage('SF Deploy') {
+            steps {
+                script {
+                    sfDeployCmd = "sf deploy functions --connected-org $params.SF_ORG_ALIAS --branch $branchName --json"
+                    sfDeployLog = 'SF_deploy.log'
+                    if (params.FORCE_DEPLOY) {
+                        sfDeployCmd += ' --force'
+                    }
+                    if (params.DRY_RUN) {
+                        echo "$dryRunString SF deploy command: $sfDeployCmd"
+                        bat "echo '$dryRunString SF deploy command: $sfDeployCmd' > $sfDeployLog"
+                    } else {
+                        bat "$sfDeployCmd > $sfDeployLog || exit"
+                    }
+                }
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: sfDeployLog
+                }
+                failure {
+                    bat """
+                        echo 'Errors for ${STAGE_NAME}'
+                        type $sfDeployLog >> $errorsFile
+                    """
+                }
+            }
+        }
+    }
+    post {
+        always {
+            script {
+                bat """
+                    copy $statusTemplateFile $statusFile
+                    python $sedXmlPythonScript --file_to_sed $statusFile --orig_string STATUS_PLACE_HOLDER --new_string ${currentBuild.currentResult}
+                    python $sedXmlPythonScript --file_to_sed $statusFile --orig_string URL_PLACE_HOLDER --new_string ${BUILD_URL}console
+                    echo '======== status file: ====='
+                    type $statusFile
+                    echo '==========================='
+                    $xcopyCmd $statusFile $targetLocalDir
+                """
+                archiveArtifacts artifacts: statusFile
+            }
+        }
+
+        failure {
+            script {
+                currentBuild.description = "$dryRunString Failed: $params.MEMBER_PACKAGE deploy"
+                archiveArtifacts artifacts: errorsFile
+            }
+        }
+        success {
+            script {
+                currentBuild.description = "$dryRunString OK: $params.MEMBER_PACKAGE deploy"
+            }
+        }
+        cleanup {
+            cleanWs()
         }
     }
 }
