@@ -68,12 +68,13 @@ pipeline {
             steps {
                 script {
                     copyLog = 'local_deploy.log'
+                    xcopyCmd = 'xcopy  /s /e /k'
                     bat """
                         echo 'Local Deploy to $params.TARGET_DIR'
                         if not exist $params.TARGET_DIR mkdir $params.TARGET_DIR || exit
-                        xcopy $WORKSPACE/config $params.TARGET_DIR /s /e /k > $copyLog  || exit
-                        xcopy $WORKSPACE/force-app $params.TARGET_DIR /s /e /k >> $copyLog  || exit
-                        xcopy $WORKSPACE/manifest $params.TARGET_DIR /s /e /k >> $copyLog  || exit
+                        $xcopyCmd $WORKSPACE\\config $params.TARGET_DIR > $copyLog  || exit
+                        $xcopyCmd $WORKSPACE\\force-app $params.TARGET_DIR >> $copyLog  || exit
+                        $xcopyCmd $WORKSPACE\\manifest $params.TARGET_DIR >> $copyLog  || exit
                     """
                 }
             }
