@@ -11,7 +11,7 @@ pipeline {
     agent any
     parameters {
         string(name: 'MEMBER_PACKAGE', description: 'Mandatory: Package to put in xml file')
-        string(name: 'TARGET_DIR',     defaultValue: 'c:\\downloads\\dot_deploy', description: 'Where to deploy to (for local deploy only)')
+        string(name: 'TARGET_DIR',     defaultValue: 'c:\\downloads', description: 'Where to deploy to (for local deploy only)')
         string(name: 'SF_ORG_ALIAS',   description: 'SF org to deploy to (for SF deploy only)')
         booleanParam(name: 'FORCE_DEPLOY',  defaultValue: false, description: 'Set to force SF deploy')
         booleanParam(name: 'DRY_RUN',  defaultValue: false, description: 'Set to only print operations')
@@ -23,6 +23,7 @@ pipeline {
                 script {
                     xmlFile = "$WORKSPACE\\manifest\\package.xml"
                     branchName = "deploy_${params.MEMBER_PACKAGE}_${currentBuild.startTimeInMillis}"
+                    targetLocalDir = "$params.TARGET_DIR\\$branchName"
                     dryRunString = ''
                     if (params.DRY_RUN) {
                         dryRunString = 'DRY_RUN: '
@@ -71,7 +72,6 @@ pipeline {
                     String xcopyCmd = 'xcopy /E /I /F'
                     bat """
                         echo 'Local Deploy to $params.TARGET_DIR'
-                        del /F /Q $params.TARGET_DIR
                         mkdir $params.TARGET_DIR || exit
                         $xcopyCmd $WORKSPACE\\config $params.TARGET_DIR\\. > $copyLog  || exit
                         $xcopyCmd $WORKSPACE\\force-app $params.TARGET_DIR\\. >> $copyLog  || exit
