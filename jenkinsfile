@@ -71,11 +71,11 @@ pipeline {
                     copyLog = 'local_deploy.log'
                     String xcopyCmd = 'xcopy /E /I /F'
                     bat """
-                        echo 'Local Deploy to $params.TARGET_DIR'
-                        mkdir $params.TARGET_DIR || exit
-                        $xcopyCmd $WORKSPACE\\config $params.TARGET_DIR\\. > $copyLog  || exit
-                        $xcopyCmd $WORKSPACE\\force-app $params.TARGET_DIR\\. >> $copyLog  || exit
-                        $xcopyCmd $WORKSPACE\\manifest $params.TARGET_DIR\\. >> $copyLog  || exit
+                        echo 'Local Deploy to $targetLocalDir'
+                        mkdir $targetLocalDir || exit
+                        $xcopyCmd $WORKSPACE\\config $targetLocalDir\\. > $copyLog  || exit
+                        $xcopyCmd $WORKSPACE\\force-app $targetLocalDir\\. >> $copyLog  || exit
+                        $xcopyCmd $WORKSPACE\\manifest $targetLocalDir\\. >> $copyLog  || exit
                     """
                 }
             }
