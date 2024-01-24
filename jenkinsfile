@@ -11,8 +11,8 @@ pipeline {
     agent any
     parameters {
         string(name: 'MEMBER_PACKAGE', description: 'Mandatory: Package to put in xml file')
-        string(name: 'TARGET_DIR',     defaultValue: 'c:\\downloads\\dot_deploy', description: 'Where to deploy to (for local deploy only)')
-        string(name: 'SF_ORG_ALIAS',   description: 'SF org to deploy to (for SF deploy only)')
+        string(name: 'TARGET_DIR',     defaultValue: 'c:\\downloads\\dot_deploy', description: 'Where to local deploy to (for local deploy only)')
+        string(name: 'SF_ORG_ALIAS',   description: 'Mandatory: SF org to deploy to (for SF deploy only)')
         booleanParam(name: 'FORCE_DEPLOY',  defaultValue: false, description: 'Set to force SF deploy')
         booleanParam(name: 'DRY_RUN',  defaultValue: false, description: 'Set to only print operations')
     }
@@ -141,6 +141,9 @@ pipeline {
             script {
                 currentBuild.description = "$dryRunString OK: $params.MEMBER_PACKAGE deploy"
             }
+        }
+        cleanup {
+            cleanWs()
         }
     }
 }
