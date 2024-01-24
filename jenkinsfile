@@ -1,7 +1,7 @@
 pipeline {
     agent any
     parameters {
-        string(name: 'TARGET_DIR',     defaultValue: 'TargetDeploy', description: 'Where to deploy to?')
+        string(name: 'TARGET_DIR',     defaultValue: 'c:\\downloads\\dot_deploy', description: 'Where to deploy to?')
         string(name: 'MEMBER_PACKAGE', defaultValue: 'HelloWorld.cls', description: 'Package to put in xml file')
         booleanParam(name: 'DRY_RUN', defaultValue: false, description: 'Set to only print operations')
     }
