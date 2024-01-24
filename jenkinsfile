@@ -71,7 +71,7 @@ pipeline {
                     bat """
                         echo 'Local Deploy to $params.TARGET_DIR'
                         if exist $params.TARGET_DIR del /F /Q $params.TARGET_DIR
-                        mkdir -p $params.TARGET_DIR || exit
+                        mkdir $params.TARGET_DIR || exit
                         xcopy $WORKSPACE/config $params.TARGET_DIR /s /e /k > $copyLog  || exit
                         xcopy $WORKSPACE/force-app $params.TARGET_DIR /s /e /k >> $copyLog  || exit
                         xcopy $WORKSPACE/manifest $params.TARGET_DIR /s /e /k >> $copyLog  || exit
