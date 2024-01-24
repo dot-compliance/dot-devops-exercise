@@ -22,6 +22,8 @@ pipeline {
             steps {
                 script {
                     xmlFile = "$WORKSPACE\\manifest\\package.xml"
+                    errorsFile = 'error.log'
+                    bat "echo 'Errors for ${BUILD_URL}console' > $errorsFile"
                     branchName = "deploy_${params.MEMBER_PACKAGE}_${currentBuild.startTimeInMillis}"
                     targetLocalDir = "$params.TARGET_DIR\\$branchName"
                     dryRunString = ''
@@ -62,6 +64,13 @@ pipeline {
                     archiveArtifacts artifacts: gitLog
                     archiveArtifacts artifacts: pythonLog
                 }
+                failure {
+                    bat """
+                        echo 'Errors for ${STAGE_NAME}'
+                        type $gitLog >> $errorsFile
+                    """
+                }
+
             }
         }
 
@@ -82,6 +91,12 @@ pipeline {
             post {
                 always {
                     archiveArtifacts artifacts: copyLog
+                }
+                failure {
+                    bat """
+                        echo 'Errors for ${STAGE_NAME}'
+                        type $copyLog >> $errorsFile
+                    """
                 }
             }
         }
@@ -108,12 +123,17 @@ pipeline {
                 always {
                     archiveArtifacts artifacts: sfDeployLog
                 }
+                bat """
+                        echo 'Errors for ${STAGE_NAME}'
+                        type $sfDeployLog >> $errorsFile
+                    """
             }
         }
     }
     post {
         failure {
             script {
+                archiveArtifacts artifacts: errorsFile
                 currentBuild.description = "$dryRunString Failed: $params.MEMBER_PACKAGE deploy"
             }
         }
