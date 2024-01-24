@@ -11,7 +11,7 @@ pipeline {
     agent any
     parameters {
         string(name: 'MEMBER_PACKAGE', description: 'Mandatory: Package to put in xml file')
-        string(name: 'TARGET_DIR',     defaultValue: 'c:\\downloads', description: 'Where to deploy to (for local deploy only)')
+        string(name: 'TARGET_DIR',     defaultValue: 'c:\\downloads\\dot_deploy', description: 'Where to deploy to (for local deploy only)')
         string(name: 'SF_ORG_ALIAS',   description: 'SF org to deploy to (for SF deploy only)')
         booleanParam(name: 'FORCE_DEPLOY',  defaultValue: false, description: 'Set to force SF deploy')
         booleanParam(name: 'DRY_RUN',  defaultValue: false, description: 'Set to only print operations')
@@ -90,23 +90,23 @@ pipeline {
             steps {
                 script {
                     String sfDeployCmd = "sf deploy functions --connected-org $params.SF_ORG_ALIAS $forceFlag --branch $branchName --json"
+                    sfDeployLog = 'SF_deploy.log'
                     if (params.FORCE_DEPLOY) {
                         sfDeployCmd += ' --force'
                     }
                     if (params.DRY_RUN) {
                         echo "$dryRunString SF deploy command: $sfDeployCmd"
-                        echo "$dryRunString SF deploy command: $sfDeployCmd" > $sfDeplpoyLog
+                        echo "$dryRunString SF deploy command: $sfDeployCmd" > $sfDeployLog
                     } else {
-                        sfDeplpoyLog = 'SF_deploy.log'
                         bat """
-                            $sfDeployCmd > $sfDeplpoyLog  || exit
+                            $sfDeployCmd > $sfDeployLog || exit
                         """
                     }
                 }
             }
             post {
                 always {
-                    archiveArtifacts artifacts: sfDeplpoyLog
+                    archiveArtifacts artifacts: sfDeployLog
                 }
             }
         }
