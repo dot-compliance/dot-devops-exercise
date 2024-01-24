@@ -1,7 +1,9 @@
 if (!params.MEMBER_PACKAGE) {
+    currentBuild.description = "Missing MEMBER_PACKAGE param"
     error("MEMBER_PACKAGE parameter is mandatory")
 }
 if (!params.SF_ORG_ALIAS) {
+    currentBuild.description = "Missing SF_ORG_ALIAS param"
     error("SF_ORG_ALIAS parameter is mandatory")
 }
 
@@ -20,7 +22,11 @@ pipeline {
             steps {
                 script {
                     xmlFile = "$WORKSPACE\\manifest\\package.xml"
-                    branchName = "deploy_${params.MEMBER_PACKAGE}"
+                    branchName = "deploy_${params.MEMBER_PACKAGE}_${currentBuild.startTimeInMillis}"
+                    dryRunString = ''
+                    if (params.DRY_RUN) {
+                        dryRunString = 'DRY_RUN: '
+                    }
                 }
             }
         }
@@ -86,8 +92,8 @@ pipeline {
                         sfDeployCmd += ' --force'
                     }
                     if (params.DRY_RUN) {
-                        echo "DRY_RUN: SF deploy command: $sfDeployCmd"
-                        echo "DRY_RUN: SF deploy command: $sfDeployCmd" > $sfDeplpoyLog
+                        echo "$dryRunString SF deploy command: $sfDeployCmd"
+                        echo "$dryRunString SF deploy command: $sfDeployCmd" > $sfDeplpoyLog
                     } else {
                         sfDeplpoyLog = 'SF_deploy.log'
                         bat """
@@ -103,4 +109,11 @@ pipeline {
             }
         }
     }
+    post {
+        failure {
+            currentBuild.description = "$dryRunString Failed: $params.MEMBER_PACKAGE deploy"
+        }
+        success {
+            currentBuild.description = "$dryRunString OK: $params.MEMBER_PACKAGE deploy"
+        }
 }
