@@ -3,7 +3,7 @@ pipeline {
     parameters {
         string(name: 'MEMBER_PACKAGE', description: 'Mandatory: Package to put in xml file')
         string(name: 'TARGET_DIR',     defaultValue: 'c:\\downloads\\dot_deploy', description: 'Where to deploy to (for local deploy only)')
-        string(name: 'SF_ORG_ALIAS',   defaultValue: '', description: 'SF org to deploy to (for SF deploy only)')
+        string(name: 'SF_ORG_ALIAS',   description: 'SF org to deploy to (for SF deploy only)')
         booleanParam(name: 'FORCE_DEPLOY',  defaultValue: false, description: 'Set to force SF deploy')
         booleanParam(name: 'DRY_RUN',  defaultValue: false, description: 'Set to only print operations')
     }
@@ -14,6 +14,9 @@ pipeline {
                 script {
                     if (!params.MEMBER_PACKAGE) {
                         error("MEMBER_PACKAGE parameter is mandatory")
+                    }
+                    if (!params.SF_ORG_ALIAS) {
+                        error("SF_ORG_ALIAS parameter is mandatory")
                     }
                     xmlFile = "$WORKSPACE\\manifest\\package.xml"
                     branchName = "deploy_${params.MEMBER_PACKAGE}"
@@ -29,6 +32,8 @@ pipeline {
                     String pythonScript = "$WORKSPACE\\python\\sedXml.py"
                     echo "Setting XML $xmlFile $xmlNamePlaceHolder to $params.MEMBER_PACKAGE"
                     bat """
+                        git config --global user.email "hagitsegev4@gmail.com"
+                        git config --global user.name "Hagit Segev"
                         git checkout -b $branchName > $gitLog || exit
                         echo "Output of python script: $pythonScript" > $pythonLog
                         python $pythonScript --new_string '${params.MEMBER_PACKAGE}.cls' >> $pythonLog || exit
