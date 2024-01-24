@@ -89,14 +89,14 @@ pipeline {
         stage('SF Deploy') {
             steps {
                 script {
-                    String sfDeployCmd = "sf deploy functions --connected-org $params.SF_ORG_ALIAS --branch $branchName --json"
+                    sfDeployCmd = "sf deploy functions --connected-org $params.SF_ORG_ALIAS --branch $branchName --json"
                     sfDeployLog = 'SF_deploy.log'
                     if (params.FORCE_DEPLOY) {
                         sfDeployCmd += ' --force'
                     }
                     if (params.DRY_RUN) {
                         echo "$dryRunString SF deploy command: $sfDeployCmd"
-                        echo "$dryRunString SF deploy command: $sfDeployCmd" > $sfDeployLog
+                        bat "echo '$dryRunString SF deploy command: $sfDeployCmd' > $sfDeployLog"
                     } else {
                         bat """
                             $sfDeployCmd > $sfDeployLog || exit
