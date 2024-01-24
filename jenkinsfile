@@ -33,6 +33,7 @@ pipeline {
                         set PATH="%PATH%;C:\\Users\\User\\AppData\\Local\\Microsoft\\WindowsApps"
                         set python=$pythonPath
                         echo %python%
+                        set
                         python --version
                         $pythonPath $pythonScript 2>>&1 $pythonLog || exit
                         echo "========= xml file after sed ============="
