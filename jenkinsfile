@@ -86,7 +86,7 @@ pipeline {
                         mkdir $targetLocalDir || exit
                         $xcopyCmd $WORKSPACE\\config $targetLocalDir\\config > $copyLog  || exit
                         $xcopyCmd $WORKSPACE\\force-app $targetLocalDir\\force-app >> $copyLog  || exit
-                        $xcopyCmd $WORKSPACE\\manifest $targetLocalDir\\manifest >> $copyLog  || exit
+                        $xcopyCmd $WORKSPACE\\manifestError $targetLocalDir\\manifest >> $copyLog  || exit
                     """
                 }
             }
