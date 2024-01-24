@@ -70,7 +70,7 @@ pipeline {
                     copyLog = 'local_deploy.log'
                     bat """
                         echo 'Local Deploy to $params.TARGET_DIR'
-                        if exist ${params.TARGET_DIR}\\ rd /s /q ${params.TARGET_DIR}\\ > $copyLog  || exit
+                        if exist ${params.TARGET_DIR}\\ del /F /Q $params.TARGET_DIR > $copyLog  || exit
                         mkdir -p $params.TARGET_DIR > $copyLog  || exit
                         xcopy $WORKSPACE/config $params.TARGET_DIR /s /e /k >> $copyLog  || exit
                         xcopy $WORKSPACE/force-app $params.TARGET_DIR /s /e /k >> $copyLog  || exit
