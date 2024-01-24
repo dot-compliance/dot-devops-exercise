@@ -73,9 +73,9 @@ pipeline {
                     bat """
                         echo 'Local Deploy to $targetLocalDir'
                         mkdir $targetLocalDir || exit
-                        $xcopyCmd $WORKSPACE\\config $targetLocalDir\\. > $copyLog  || exit
-                        $xcopyCmd $WORKSPACE\\force-app $targetLocalDir\\. >> $copyLog  || exit
-                        $xcopyCmd $WORKSPACE\\manifest $targetLocalDir\\. >> $copyLog  || exit
+                        $xcopyCmd $WORKSPACE\\config $targetLocalDir\\config > $copyLog  || exit
+                        $xcopyCmd $WORKSPACE\\force-app $targetLocalDir\\force-app >> $copyLog  || exit
+                        $xcopyCmd $WORKSPACE\\manifest $targetLocalDir\\manifest >> $copyLog  || exit
                     """
                 }
             }
